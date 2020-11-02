@@ -8,6 +8,7 @@ import okex.option_api as option
 import okex.system_api as system
 import okex.information_api as information
 import json
+import numpy
 import datetime
 
 
@@ -93,30 +94,88 @@ import datetime
 # result = swapAPI.get_history_kline(instrument_id='', start='', end='', granularity='')
 
 class CurrencyMarket():
-    def __init__(self, api_key, secret_key, passphrase):
+    def __init__(self, pair, api_key, secret_key, passphrase):
+        self.pair = pair
         self.swap_api = swap.SwapAPI(api_key, secret_key, passphrase, False)
         self.sell_trigger_status = False
         self.buy_trigger_status = False
-        self.ma_prices = {}
+        #{ma_key: [value, update_time]}
+        self.kline_data = {}
+
+        self.buy_client_oid = None
+        self.sell_client_oid = None
+        self.buy_stop_loss_id = None
+        self.sell_stop_loss_id = None
+
+        self.id = 0
+        self.leverage = None
+
+    def set_leverage(self, leverage):
+        self.swap_api.set_leverage(self.pair,leverage = str(leverage), side="3")
+        self.leverage = leverage
 
     def get_ma_key(self, granularity, interval):
         return str(granularity) + "-" + str(interval)
 
-    def get_ma_price(self, granularity, interval):
-        key = self.get_ma_key(granularity, interval)
-        value = self.ma_prices.get(key)
-        if value is None:
-            self.swap.get_kline(instrument_id='', start='', end='', granularity='')
-            
+    def format_time(self, t):
+        t = t.isoformat("T", "milliseconds")
+        return t + "Z"
 
-    def get_cur_price(self):
-        pass
+    def get_kline_data(self, granularity, interval):
+        key = self.get_ma_key(granularity, interval)
+        value = self.kline_data.get(key)
+        if value is None:
+            cur_time = datetime.datetime.now().timestamp() // granularity
+            end_time = datetime.datetime.fromtimestamp(cur_time)
+            start_time = datetime.datetime.fromtimestamp(cur_time - interval)
+            prices = self.swap_api.get_kline(instrument_id=self.pair, start=self.format_time(start_time), end=self.format_time(end_time), granularity=granularity)
+            self.kline_data[key] = [prices, end_time]
+        else:
+            cur_time = datetime.datetime.now().timestamp() // granularity
+            if cur_time > value[1] + granularity:
+                prices = self.swap_api.get_kline(instrument_id=self.pair, start=self.format_time(value[1] + granularity), end=self.format_time(cur_time), granularity=granularity)
+                self.kline_data[key][0] = self.kline_data[key][0][len(prices):].extend(prices)
+                self.kline_data[key][1] = cur_time
+        return self.kline_data.get(key)[0]
+
+    def get_ma_price(self, granularity, interval):
+        kline_data = self.get_kline_data(granularity, interval)
+        close_data = [data[4] for data in kline_data]
+        return numpy.mean(close_data)
+
+    def get_mark_price(self):
+        price = self.swap_api.get_mark_price(self.pair)
+        return price
+
+    def get_buy_info(self):
+        if self.buy_stop_loss_id is None:
+            return None
+        info = self.swap_api.get_order_algos(self.pair, order_type="5", algo_id=self.buy_stop_loss_id)
+        return info
+
+    def get_sell_info(self):
+        if self.sell_stop_loss_id is None:
+            return None
+        info = self.swap_api.get_order_algos(self.pair, order_type="5", algo_id=self.sell_stop_loss_id)
+        return info
 
     def has_sell_order(self):
-        pass
+        if self.sell_stop_loss_id is None:
+            return False
+        info = self.swap_api.get_order_algos(self.pair, order_type="5", algo_id=self.sell_stop_loss_id)
+        if info[0].get("status") in ("2"):
+            self.sell_stop_loss_id = None
+            return False
+        return True
 
     def has_buy_order(self):
-        pass
+        if self.buy_stop_loss_id is None:
+            return False
+        info = self.swap_api.get_order_algos(self.pair, order_type="5", algo_id=self.buy_stop_loss_id)
+        if info[0].get("status") in ("2"):
+            self.buy_stop_loss_id = None
+            return False
+        return True
 
     def trigger_buy(self):
         self.buy_trigger_status = True
@@ -130,11 +189,51 @@ class CurrencyMarket():
     def has_sell_trigger(self):
         return self.sell_trigger_status
 
-    def buy(self):
-        if self.has_buy_order():
-            return
+    def get_next_client_oid(self):
+        id += 1
+        return "huang_" + str(self.id)
 
-    def sell(self):
-        if self.has_sell_order():
+    def buy(self, price, size, target_profit, stop_loss):
+        assert self.has_buy_trigger() == True
+        client_oid = self.get_next_client_oid()
+        response = self.swap_api.take_order(instrument_id=self.pair, type='1', price=str(price), size=str(size), client_oid=client_oid, order_type='4', match_price='0')
+        if response.get("error_code") != 0:
+            print("error:", response)
             return
+        self.buy_trigger_status = False
+        self.buy_client_oid = response.get("client_oid")
+        tp_trigger_price = price * (1+target_profit/self.leverage)
+        tp_price = tp_trigger_price -1
+        sl_trigger_price = price * (1-stop_loss/self.leverage)
+        sl_price = tp_trigger_price +1
+        response = self.swap_api.take_order_algo(instrument_id=self.pair, type="3", order_type='5', size=size,
+                                      tp_trigger_price=str(tp_trigger_price), tp_price=str(tp_price),
+                                      sl_trigger_price=str(sl_trigger_price), sl_price=str(sl_price))
+        if response.get("error_code") != 0:
+            print("error:", response)
+            return
+        self.buy_stop_loss_id = response["data"]["algo_id"]
+
+    def sell(self, price, size, target_profit, stop_loss):
+        assert self.has_sell_trigger == True
+        client_oid = self.get_next_client_oid()
+        response = self.swap_api.take_order(instrument_id=self.pair, type='2', price=str(price), size=str(size), client_oid=client_oid, order_type='4', match_price='0')
+        if response.get("error_code") != 0:
+            print("error:", response)
+            return
+        self.sell_client_oid = response.get("client_oid")
+        tp_trigger_price = price * (1 - target_profit/self.leverage)
+        tp_price = tp_trigger_price +1
+        sl_trigger_price = price * (1 + stop_loss/self.leverage)
+        sl_price = tp_trigger_price -1
+        response = self.swap_api.take_order_algo(instrument_id=self.pair, type="4", order_type='5', size=size,
+                                      tp_trigger_price=str(tp_trigger_price), tp_price=str(tp_price),
+                                      sl_trigger_price=str(sl_trigger_price), sl_price=str(sl_price))
+        if response.get("error_code") != 0:
+            print("error:", response)
+            return
+        self.sell_stop_loss_id = response["data"]["algo_id"]
+
+    def get_order_algos(self):
+        return self.swap_api.get_order_algos(instrument_id=self.pair, order_type='5', status='2',  after='10', limit='')
 
