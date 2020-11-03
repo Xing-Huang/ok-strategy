@@ -18,6 +18,7 @@ def index():
     ret["sell_trigger"] = btc_market.sell_trigger_status
     ret["buy_order"] = btc_market.has_buy_order()
     ret["sell_order"] = btc_market.has_sell_order()
+    ret["leverage"] = btc_market.leverage
     ret["trade_detail"] = btc_market.get_trade_detail()
     return ret
 
