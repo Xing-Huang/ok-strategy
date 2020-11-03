@@ -231,5 +231,5 @@ class CurrencyMarket():
         return self.swap_api.get_order_algos(instrument_id=self.pair, order_type='5', status='2')
 
     def get_trade_detail(self):
-        return self.swap_api.get_trades(self.pair)
+        return self.swap_api.get_fills(self.pair)
 
