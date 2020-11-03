@@ -126,7 +126,6 @@ class CurrencyMarket():
         value = self.kline_data.get(key)
         # if value is None:
         cur_time = datetime.datetime.now().timestamp()
-        cur_time = int(cur_time + 8*60*60)
         end_time = datetime.datetime.fromtimestamp(cur_time)
         start_time = datetime.datetime.fromtimestamp(cur_time - interval)
         prices = self.swap_api.get_kline(instrument_id=self.pair, start=self.format_time(start_time), end=self.format_time(end_time), granularity=str(granularity))
