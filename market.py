@@ -182,7 +182,7 @@ class CurrencyMarket():
     def buy(self, size):
         client_oid = self.get_next_client_oid()
         response = self.swap_api.take_order(instrument_id=self.pair, type='1',  size=str(size), client_oid=client_oid, order_type='4', match_price='0')
-        if response.get("error_code") != 0:
+        if response.get("error_code") != "0":
             print("error:", response)
             return
         self.buy_client_oid = response.get("client_oid")
@@ -190,7 +190,7 @@ class CurrencyMarket():
     def sell(self, size):
         client_oid = self.get_next_client_oid()
         response = self.swap_api.take_order(instrument_id=self.pair, type='2',  size=str(size), client_oid=client_oid, order_type='4', match_price='0')
-        if response.get("error_code") != 0:
+        if response.get("error_code") != "0":
             print("error:", response)
             return
         self.sell_client_oid = response.get("client_oid")
@@ -203,18 +203,6 @@ class CurrencyMarket():
         import random
         self.id = random.randint(1, 1000000)
         return "huang" + str(self.id)
-
-    def get_buy_info(self):
-        if self.buy_stop_loss_id is None:
-            return None
-        info = self.swap_api.get_order_algos(self.pair, order_type="5", algo_id=self.buy_stop_loss_id)
-        return info
-
-    def get_sell_info(self):
-        if self.sell_stop_loss_id is None:
-            return None
-        info = self.swap_api.get_order_algos(self.pair, order_type="5", algo_id=self.sell_stop_loss_id)
-        return info
 
     def get_ma_key(self, granularity, interval):
         return str(granularity) + "-" + str(interval)
