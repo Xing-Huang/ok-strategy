@@ -179,7 +179,7 @@ class CurrencyMarket():
             return
         self.sell_stop_loss_id = response["data"]["algo_id"]
 
-    def buy(self, price, size):
+    def buy(self, size):
         client_oid = self.get_next_client_oid()
         response = self.swap_api.take_order(instrument_id=self.pair, type='1',  size=str(size), client_oid=client_oid, order_type='4', match_price='0')
         if response.get("error_code") != 0:
@@ -187,8 +187,7 @@ class CurrencyMarket():
             return
         self.buy_client_oid = response.get("client_oid")
 
-
-    def sell(self, price, size):
+    def sell(self, size):
         client_oid = self.get_next_client_oid()
         response = self.swap_api.take_order(instrument_id=self.pair, type='2',  size=str(size), client_oid=client_oid, order_type='4', match_price='0')
         if response.get("error_code") != 0:
@@ -201,7 +200,8 @@ class CurrencyMarket():
         return self.swap_api.get_fills(self.pair)
 
     def get_next_client_oid(self):
-        self.id += 1
+        import random
+        self.id = random.randint(1, 1000000)
         return "huang" + str(self.id)
 
     def get_buy_info(self):

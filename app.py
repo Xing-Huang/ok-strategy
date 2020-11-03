@@ -26,7 +26,7 @@ def buy():
     btc_market = strategy_thread.btc_market
     cur_price = btc_market.get_mark_price()
     btc_market.buy_trigger_status = True
-    btc_market.buy(cur_price, size=size)
+    btc_market.buy(size=size)
     time.sleep(0.5)
     btc_market.set_buy_stop_loss(cur_price, size, target_profit, stop_loss)
     btc_market.buy_trigger_status = False
@@ -39,7 +39,7 @@ def sell():
     cur_price = btc_market.get_mark_price()
     btc_market.sell_trigger_status = True
 
-    btc_market.sell(cur_price, size=size, target_profit=target_profit, stop_loss=stop_loss)
+    btc_market.sell(size=size)
     time.sleep(0.5)
     btc_market.set_sell_stop_loss(cur_price, size, target_profit, stop_loss)
     btc_market.buy_trigger_status = False
