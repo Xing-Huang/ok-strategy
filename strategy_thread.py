@@ -21,6 +21,7 @@ class StrategyThread(Thread):
         while True:
             cur_price = self.btc_market.get_mark_price()
             ma_price = self.btc_market.get_ma_price(granularity, interval)
+            print(cur_price, ma_price, buy_trigger_ratio, type(cur_price), type(ma_price))
             if cur_price >= ma_price * buy_trigger_ratio:
                 self.btc_market.trigger_buy()
             # elif cur_price < ma_price and self.btc_market.has_buy_trigger():
