@@ -145,7 +145,7 @@ class CurrencyMarket():
 
     def get_mark_price(self):
         price = self.swap_api.get_mark_price(self.pair)
-        return price
+        return price["mark_price"]
 
     def get_buy_info(self):
         if self.buy_stop_loss_id is None:
