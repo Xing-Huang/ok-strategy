@@ -183,7 +183,7 @@ class CurrencyMarket():
         return self.sell_trigger_status
 
     def get_next_client_oid(self):
-        id += 1
+        self.id += 1
         return "huang_" + str(self.id)
 
     def buy(self, price, size, target_profit, stop_loss):
