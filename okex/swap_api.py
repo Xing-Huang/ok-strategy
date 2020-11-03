@@ -213,7 +213,7 @@ class SwapAPI(Client):
             params['single_limit'] = single_limit
             params['price_limit'] = price_limit
             params['time_interval'] = time_interval
-        elif order_type == '5':  
+        elif order_type == '5':
             params['tp_trigger_price'] = tp_trigger_price
             params['tp_price'] = tp_price
             # params['tp_trigger_type'] = tp_trigger_type
