@@ -7,7 +7,6 @@ app = Flask(__name__)
 
 strategy_thread = StrategyThread(pair=pair, api_key=api_key, secret_key=secret_key, passphrase=passphrase)
 
-
 @app.route("/")
 def index():
     ret = {}
@@ -25,7 +24,7 @@ if __name__ == "__main__":
     strategy_thread.setDaemon(True)
     strategy_thread.start()
 
-    app.run(host="0.0.0.0", port=9000, debug=False)
+    app.run(host="0.0.0.0", port=8000, debug=False)
 
 
 
