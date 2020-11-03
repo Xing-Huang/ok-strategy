@@ -141,11 +141,11 @@ class CurrencyMarket():
     def get_ma_price(self, granularity, interval):
         kline_data = self.get_kline_data(granularity, interval)
         close_data = [data[4] for data in kline_data]
-        return numpy.mean(close_data)
+        return float(numpy.mean(close_data))
 
     def get_mark_price(self):
         price = self.swap_api.get_mark_price(self.pair)
-        return price["mark_price"]
+        return float(price["mark_price"])
 
     def get_buy_info(self):
         if self.buy_stop_loss_id is None:
