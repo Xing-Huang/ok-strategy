@@ -38,8 +38,10 @@ class SwapAPI(Client):
             params['type'] = type
         return self._request_with_params(GET, SWAP_ACCOUNTS + '/' + str(instrument_id) + '/ledger', params, cursor=True)
 
-    def take_order(self, instrument_id, type, price, size, client_oid='', order_type='0', match_price='0'):
-        params = {'instrument_id': instrument_id, 'type': type, 'size': size, 'price': price}
+    def take_order(self, instrument_id, type, size, price=None, client_oid='', order_type='0', match_price='0'):
+        params = {'instrument_id': instrument_id, 'type': type, 'size': size}
+        if price is not None:
+            params["price"] = price
         if client_oid:
             params['client_oid'] = client_oid
         if order_type:
