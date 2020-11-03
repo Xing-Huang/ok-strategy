@@ -202,7 +202,7 @@ class CurrencyMarket():
 
     def get_next_client_oid(self):
         self.id += 1
-        return "huang_" + str(self.id)
+        return "huang" + str(self.id)
 
     def get_buy_info(self):
         if self.buy_stop_loss_id is None:
