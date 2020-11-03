@@ -130,15 +130,6 @@ class CurrencyMarket():
         start_time = datetime.datetime.fromtimestamp(cur_time - interval)
         prices = self.swap_api.get_kline(instrument_id=self.pair, start=self.format_time(start_time), end=self.format_time(end_time), granularity=str(granularity))
         return prices
-        #     self.kline_data[key] = [prices, cur_time]
-        # else:
-        #     cur_time = datetime.datetime.now().timestamp() // granularity
-        #     cur_time = int(cur_time*granularity)
-        #     if cur_time > value[1] + granularity:
-        #         prices = self.swap_api.get_kline(instrument_id=self.pair, start=self.format_time(value[1] + granularity), end=self.format_time(cur_time), granularity=str(granularity))
-        #         self.kline_data[key][0] = self.kline_data[key][0][len(prices):].extend(prices)
-        #         self.kline_data[key][1] = cur_time
-        # return self.kline_data.get(key)[0]
 
     def get_ma_price(self, granularity, interval):
         kline_data = self.get_kline_data(granularity, interval)
@@ -238,4 +229,7 @@ class CurrencyMarket():
 
     def get_order_algos(self):
         return self.swap_api.get_order_algos(instrument_id=self.pair, order_type='5', status='2')
+
+    def get_trade_detail(self):
+        return self.swap_api.get_trades(self.pair)
 

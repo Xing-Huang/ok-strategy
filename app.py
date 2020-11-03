@@ -17,7 +17,7 @@ def index():
     ret["sell_trigger"] = btc_market.sell_trigger_status
     ret["buy_order"] = btc_market.get_buy_info()
     ret["sell_order"] = btc_market.get_sell_info()
-    ret["order_history"] = btc_market.get_order_algos()
+    ret["trade_detail"] = btc_market.get_trade_detail()
     return ret
 
 if __name__ == "__main__":
