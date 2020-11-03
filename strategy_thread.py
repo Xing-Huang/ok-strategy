@@ -14,7 +14,7 @@ def get_timestamp():
 class StrategyThread(Thread):
     def __init__(self, pair, api_key, secret_key, passphrase):
         Thread.__init__(self)
-        self.btc_market = CurrencyMarket("BTC_USDT_SWAP", api_key, secret_key, passphrase)
+        self.btc_market = CurrencyMarket(pair, api_key, secret_key, passphrase)
 
     def run(self):
         self.btc_market.set_leverage(leverage)
