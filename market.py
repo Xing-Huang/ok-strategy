@@ -158,10 +158,10 @@ class CurrencyMarket():
         tp_price = tp_trigger_price -1
         sl_trigger_price = price * (1-stop_loss/self.leverage)
         sl_price = tp_trigger_price +1
-        response = self.swap_api.take_order_algo(instrument_id=self.pair, type="3", order_type='5', size=size,
+        response = self.swap_api.take_order_algo(instrument_id=self.pair, type="3", order_type='4', size=size,
                                       tp_trigger_price=str(tp_trigger_price), tp_price=str(tp_price),
                                       sl_trigger_price=str(sl_trigger_price), sl_price=str(sl_price))
-        if response.get("error_code") != 0:
+        if response.get("error_code") != "0":
             print("error:", response)
             return
         self.buy_stop_loss_id = response["data"]["algo_id"]
@@ -174,7 +174,7 @@ class CurrencyMarket():
         response = self.swap_api.take_order_algo(instrument_id=self.pair, type="4", order_type='5', size=size,
                                       tp_trigger_price=str(tp_trigger_price), tp_price=str(tp_price),
                                       sl_trigger_price=str(sl_trigger_price), sl_price=str(sl_price))
-        if response.get("error_code") != 0:
+        if response.get("error_code") != "0":
             print("error:", response)
             return
         self.sell_stop_loss_id = response["data"]["algo_id"]
