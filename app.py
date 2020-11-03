@@ -12,6 +12,7 @@ def index():
     ret = {}
     btc_market = strategy_thread.btc_market
     ret["ma_price"] = btc_market.get_ma_price(granularity, interval)
+    ret["cur_price"] = btc_market.get_mark_price()
     ret["buy_trigger"] = btc_market.buy_trigger_status
     ret["sell_trigger"] = btc_market.sell_trigger_status
     ret["buy_order"] = btc_market.get_buy_info()
