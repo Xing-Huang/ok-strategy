@@ -43,7 +43,7 @@ def sell():
     btc_market.sell(size=size)
     time.sleep(0.5)
     btc_market.set_sell_stop_loss(cur_price, size, target_profit, stop_loss)
-    btc_market.buy_trigger_status = False
+    btc_market.sell_trigger_status = False
 
     return "success"
 
