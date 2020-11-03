@@ -125,8 +125,7 @@ class CurrencyMarket():
         if self.sell_stop_loss_id is None:
             return False
         info = self.swap_api.get_order_algos(self.pair, order_type="5", algo_id=self.sell_stop_loss_id)
-        print(info)
-        if info[0].get("status") in ("2",):
+        if info.get("orderStrategyVOS").get("status") in ("2", "3"):
             self.sell_stop_loss_id = None
             return False
         return True
@@ -135,8 +134,7 @@ class CurrencyMarket():
         if self.buy_stop_loss_id is None:
             return False
         info = self.swap_api.get_order_algos(self.pair, order_type="5", algo_id=self.buy_stop_loss_id)
-        print(info)
-        if info[0].get("status") in ("2",):
+        if info.get("orderStrategyVOS").get("status") in ("2", "3"):
             self.buy_stop_loss_id = None
             return False
         return True
