@@ -129,7 +129,7 @@ class CurrencyMarket():
             end_time = datetime.datetime.fromtimestamp(cur_time)
             start_time = datetime.datetime.fromtimestamp(cur_time - interval)
             prices = self.swap_api.get_kline(instrument_id=self.pair, start=self.format_time(start_time), end=self.format_time(end_time), granularity=granularity)
-            self.kline_data[key] = [prices, end_time]
+            self.kline_data[key] = [prices, cur_time]
         else:
             cur_time = datetime.datetime.now().timestamp() // granularity
             if cur_time > value[1] + granularity:
