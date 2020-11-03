@@ -237,5 +237,5 @@ class CurrencyMarket():
         self.sell_stop_loss_id = response["data"]["algo_id"]
 
     def get_order_algos(self):
-        return self.swap_api.get_order_algos(instrument_id=self.pair, order_type='5', status='2',  after='10', limit='')
+        return self.swap_api.get_order_algos(instrument_id=self.pair, order_type='5', status='2')
 
