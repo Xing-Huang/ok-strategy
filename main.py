@@ -1,4 +1,4 @@
 import numpy
 
-a = []
-print(numpy.mean(a))
+a = [1, 2]
+print(float(numpy.mean(a)))
