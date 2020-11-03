@@ -1,4 +1,4 @@
 import numpy
 
-a = [1, 2, 3]
-print(type(numpy.mean(a)))
+a = []
+print(numpy.mean(a))

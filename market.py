@@ -140,7 +140,7 @@ class CurrencyMarket():
 
     def get_ma_price(self, granularity, interval):
         kline_data = self.get_kline_data(granularity, interval)
-        close_data = [data[4] for data in kline_data]
+        close_data = [float(data[4]) for data in kline_data]
         return float(numpy.mean(close_data))
 
     def get_mark_price(self):
