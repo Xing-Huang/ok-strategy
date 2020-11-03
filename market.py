@@ -181,7 +181,7 @@ class CurrencyMarket():
 
     def buy(self, price, size):
         client_oid = self.get_next_client_oid()
-        response = self.swap_api.take_order(instrument_id=self.pair, type='1', price=str(price), size=str(size), client_oid=client_oid, order_type='4', match_price='0')
+        response = self.swap_api.take_order(instrument_id=self.pair, type='1',  size=str(size), client_oid=client_oid, order_type='4', match_price='0')
         if response.get("error_code") != 0:
             print("error:", response)
             return
@@ -190,7 +190,7 @@ class CurrencyMarket():
 
     def sell(self, price, size):
         client_oid = self.get_next_client_oid()
-        response = self.swap_api.take_order(instrument_id=self.pair, type='2', price=str(price), size=str(size), client_oid=client_oid, order_type='4', match_price='0')
+        response = self.swap_api.take_order(instrument_id=self.pair, type='2',  size=str(size), client_oid=client_oid, order_type='4', match_price='0')
         if response.get("error_code") != 0:
             print("error:", response)
             return
