@@ -11,7 +11,7 @@ strategy_thread = StrategyThread(pair=pair, api_key=api_key, secret_key=secret_k
 def index():
     ret = {}
     btc_market = strategy_thread.btc_market
-    ret["kline_data"] = btc_market.kline_data
+    ret["kline_data"] = btc_market.get_kline_data(granularity, interval)
     ret["ma_price"] = btc_market.get_ma_price(granularity, interval)
     ret["buy_trigger"] = btc_market.buy_trigger_status
     ret["sell_trigger"] = btc_market.sell_trigger_status
