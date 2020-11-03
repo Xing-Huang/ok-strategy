@@ -28,7 +28,7 @@ def buy():
     return "success"
 
 @app.route("/sell")
-def buy():
+def sell():
     btc_market = strategy_thread.btc_market
     cur_price = btc_market.get_mark_price()
     btc_market.sell(cur_price, size=size, target_profit=target_profit, stop_loss=stop_loss)
