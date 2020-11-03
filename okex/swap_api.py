@@ -216,8 +216,8 @@ class SwapAPI(Client):
         elif order_type == '5':
             params['tp_trigger_price'] = tp_trigger_price
             params['tp_price'] = tp_price
-            # params['tp_trigger_type'] = tp_trigger_type
-            # params['sl_trigger_type'] = sl_trigger_type
+            params['tp_trigger_type'] = tp_trigger_type
+            params['sl_trigger_type'] = sl_trigger_type
             params['sl_trigger_price'] = sl_trigger_price
             params['sl_price'] = sl_price
 
