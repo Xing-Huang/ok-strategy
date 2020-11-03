@@ -124,21 +124,22 @@ class CurrencyMarket():
     def get_kline_data(self, granularity, interval):
         key = self.get_ma_key(granularity, interval)
         value = self.kline_data.get(key)
-        if value is None:
-            cur_time = datetime.datetime.now().timestamp() // granularity
-            cur_time = int(cur_time*granularity)
-            end_time = datetime.datetime.fromtimestamp(cur_time)
-            start_time = datetime.datetime.fromtimestamp(cur_time - interval)
-            prices = self.swap_api.get_kline(instrument_id=self.pair, start=self.format_time(start_time), end=self.format_time(end_time), granularity=str(granularity))
-            self.kline_data[key] = [prices, cur_time]
-        else:
-            cur_time = datetime.datetime.now().timestamp() // granularity
-            cur_time = int(cur_time*granularity)
-            if cur_time > value[1] + granularity:
-                prices = self.swap_api.get_kline(instrument_id=self.pair, start=self.format_time(value[1] + granularity), end=self.format_time(cur_time), granularity=str(granularity))
-                self.kline_data[key][0] = self.kline_data[key][0][len(prices):].extend(prices)
-                self.kline_data[key][1] = cur_time
-        return self.kline_data.get(key)[0]
+        # if value is None:
+        cur_time = datetime.datetime.now().timestamp()
+        cur_time = int(cur_time + 8*60*60)
+        end_time = datetime.datetime.fromtimestamp(cur_time)
+        start_time = datetime.datetime.fromtimestamp(cur_time - interval)
+        prices = self.swap_api.get_kline(instrument_id=self.pair, start=self.format_time(start_time), end=self.format_time(end_time), granularity=str(granularity))
+        return prices
+        #     self.kline_data[key] = [prices, cur_time]
+        # else:
+        #     cur_time = datetime.datetime.now().timestamp() // granularity
+        #     cur_time = int(cur_time*granularity)
+        #     if cur_time > value[1] + granularity:
+        #         prices = self.swap_api.get_kline(instrument_id=self.pair, start=self.format_time(value[1] + granularity), end=self.format_time(cur_time), granularity=str(granularity))
+        #         self.kline_data[key][0] = self.kline_data[key][0][len(prices):].extend(prices)
+        #         self.kline_data[key][1] = cur_time
+        # return self.kline_data.get(key)[0]
 
     def get_ma_price(self, granularity, interval):
         kline_data = self.get_kline_data(granularity, interval)
