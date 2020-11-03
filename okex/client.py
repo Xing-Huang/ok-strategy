@@ -38,7 +38,6 @@ class Client(object):
             print("url:", url)
             self.first = False
 
-        # print("url:", url)
         # print("headers:", header)
         # print("body:", body)
 
@@ -53,6 +52,8 @@ class Client(object):
 
         # exception handle
         if not str(response.status_code).startswith('2'):
+            print("url:", url)
+            print("body:", body)
             raise exceptions.OkexAPIException(response)
         try:
             res_header = response.headers
