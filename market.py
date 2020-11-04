@@ -194,6 +194,7 @@ class CurrencyMarket():
             print("error:", response)
             return
         self.buy_client_oid = response.get("client_oid")
+        self.buy_trigger_status = False
 
     def sell(self, size):
         client_oid = self.get_next_client_oid()
@@ -202,6 +203,7 @@ class CurrencyMarket():
             print("error:", response)
             return
         self.sell_client_oid = response.get("client_oid")
+        self.sell_trigger_status = False
 
 
     def get_trade_detail(self):
