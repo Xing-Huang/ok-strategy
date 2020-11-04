@@ -140,10 +140,16 @@ class CurrencyMarket():
         return True
 
     def trigger_buy(self):
+        if self.buy_trigger_status == True:
+            return False
         self.buy_trigger_status = True
+        return True
 
     def trigger_sell(self):
+        if self.sell_trigger_status == True:
+            return False
         self.sell_trigger_status = True
+        return True
 
     def has_buy_trigger(self):
         return self.buy_trigger_status

@@ -22,7 +22,8 @@ class StrategyThread(Thread):
             cur_price = self.btc_market.get_mark_price()
             ma_price = self.btc_market.get_ma_price(granularity, interval)
             if cur_price >= ma_price * buy_trigger_ratio:
-                self.btc_market.trigger_buy()
+                if self.btc_market.trigger_buy():
+                    print(get_timestamp(),"trigger_buy", "cur_price:", cur_price, "ma_price:", ma_price)
             elif cur_price < ma_price and self.btc_market.has_buy_trigger():
                 self.btc_market.buy(size)
                 time.sleep(0.5)
@@ -34,5 +35,7 @@ class StrategyThread(Thread):
                 self.btc_market.set_sell_stop_loss(ma_price, size, target_profit, stop_loss)
                 self.btc_market.sell_trigger_status = False
             elif cur_price < ma_price * sell_trigger_ratio:
-                self.btc_market.trigger_sell()
+                if self.btc_market.trigger_sell():
+                    print(get_timestamp(),"trigger_sell", "cur_price:", cur_price, "ma_price:", ma_price)
+
             time.sleep(1)
